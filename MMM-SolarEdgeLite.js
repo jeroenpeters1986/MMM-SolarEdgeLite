@@ -106,6 +106,7 @@ Module.register("MMM-SolarEdgeLite",{
         if (!this.config.basicHeader) {
             let imgDiv = document.createElement("div");
             let img = document.createElement("img");
+            img.align = "absmiddle";
             img.src = "/modules/MMM-SolarEdgeLite/solar_white.png";
 
             let sTitle = document.createElement("p");

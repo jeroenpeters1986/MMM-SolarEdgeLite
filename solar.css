@@ -6,11 +6,12 @@ img {
 p {
 	display: inline;
 	font-size: 25px;
-	margin: 0px 0px 0px 15px;
+	margin: 0;
 } 
 hr {
 	border-color: #666;
+	margin: 15px 0;
 }
 td {
-	padding: 0px 5px 0px 0px;
+	padding: 0 5px 0 0;
 }
