@@ -1,34 +1,49 @@
 /*
-* Magic Mirror module for displaying SolarEdge data
-* By bertieuk, forked from Thomas Krywitsky https://github.com/tkrywit/MMM-Solar
+* Magic Mirror module for displaying minimal SolarEdge data
+* Today, yesterday, this month
+* By Jeroen Peters (jeroenpeters1986), forked from BertieUK https://github.com/bertieuk/MMM-Solar
 * MIT Licensed
 */
 
 Module.register("MMM-SolarEdge",{
-    // Default module config.
     defaults: {
         url: "https://monitoringapi.solaredge.com/site/",
-        apiKey: "", //Enter API key in config.js not here
-        siteId: "12345", //Sample site
-        refInterval: 1000 * 60 * 5, //5 minutes
+        apiKey: "",
+        siteId: "12345",
+        refInterval: 1000 * 60 * 5,
         basicHeader: false,
+        language: 'en'
     },
-
+    /* This one is not very solid, we'll see if we can improve it when the module increases popularity */
+    getLangStrings: function(lang, string_title)
+    {
+        let strings = [];
+        if( lang == 'nl' ) {
+            strings["title"] = "Zonnepanelen";
+            strings["titles"] = ["Huidig vermogen:", "Vandaag gegenereerd:", "Deze maand:", "Afgelopen jaar:", "Totale looptijd:"];
+            strings["suffixes"] = ["Watt", "kWh", "kWh", "kWh", "MWh"];
+            strings["results"] = ["Laden...", "Laden...", "Laden...", "Laden...", "Laden..."];
+        } else {
+            strings["title"] = "SolarEdge PV";
+            strings["titles"] = ["Current power:", "Generated today:", "This month:", "Last Year:", "Lifetime Energy:"];
+            strings["suffixes"] = ["Watt", "kWh", "kWh", "kWh", "MWh"];
+            strings["results"] = ["Laden...", "Laden...", "Laden...", "Laden...", "Laden..."];
+        }
+        return strings[string_title];
+    },
     start: function() {
-        // Logging appears in Chrome developer tools console
-        Log.info("Starting module: " + this.name);
-
-        this.titles = ["Current Power:", "Daily Energy:", "Last Month:", "Last Year:", "Lifetime Energy:"];
-        this.suffixes = ["Watts", "kWh", "kWh", "kWh", "MWh"];
-        this.results = ["Loading", "Loading", "Loading", "Loading", "Loading"];
+        this.titles = this.getLangStrings(this.config.language, 'titles');
+        this.suffixes = this.getLangStrings(this.config.language, 'suffixes');
+        this.results = this.getLangStrings(this.config.language, 'results');
         this.loaded = false;
         this.getSolarData();
 
         if (this.config.basicHeader) {
-            this.data.header = 'SolarEdge PV';
+            this.data.header = this.getLangStrings(this.config.language, 'title');
         }
 
         var self = this;
+
         //Schedule updates
         setInterval(function() {
             self.getSolarData();
@@ -40,13 +55,11 @@ Module.register("MMM-SolarEdge",{
 
     //Import additional CSS Styles
     getStyles: function() {
-    return ['solar.css']
+        return ['solar.css']
     },
 
     //Contact node helper for solar data
     getSolarData: function() {
-        Log.info("SolarApp: getting data");
-
         this.sendSocketNotification("GET_SOLAR", {
             config: this.config
           });
@@ -59,7 +72,7 @@ Module.register("MMM-SolarEdge",{
 	    if (currentPower > 1000) {
                this.results[0] = (currentPower / 1000).toFixed(2) + " kW";
             } else {
-               this.results[0] = currentPower + " Watts";
+               this.results[0] = currentPower + " Watt";
             }
             this.results[1] = (payload.overview.lastDayData.energy / 1000).toFixed(2) + " kWh";
             this.results[2] = (payload.overview.lastMonthData.energy / 1000).toFixed(2) + " kWh";
@@ -72,10 +85,9 @@ Module.register("MMM-SolarEdge",{
 
     // Override dom generator.
     getDom: function() {
-
         var wrapper = document.createElement("div");
 	if (this.config.apiKey === "" || this.config.siteId === "") {
-	    wrapper.innerHTML = "Missing configuration.";
+	    wrapper.innerHTML = "No configuration!";
 	    return wrapper;
 	}
 
@@ -93,7 +105,7 @@ Module.register("MMM-SolarEdge",{
             img.src = "/modules/MMM-SolarEdge/solar_white.png";
 
             var sTitle = document.createElement("p");
-            sTitle.innerHTML = "SolarEdge PV";
+            sTitle.innerHTML = this.getLangStrings(this.config.language, 'title');
             sTitle.className += " thin normal";
             imgDiv.appendChild(img);
     	      imgDiv.appendChild(sTitle);
@@ -111,8 +123,8 @@ Module.register("MMM-SolarEdge",{
         		var dataTr = document.createElement("td");
 
         		titleTr.innerHTML = this.titles[i];
-//        		dataTr.innerHTML = this.results[i] + " " + this.suffixes[i];
-            dataTr.innerHTML = this.results[i];
+        		dataTr.innerHTML = this.results[i] + " " + this.suffixes[i];
+                dataTr.innerHTML = this.results[i];
         		titleTr.className += " medium regular bright";
         		dataTr.classname += " medium light normal";
 

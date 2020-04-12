@@ -1,26 +1,39 @@
-
 var request = require('request');
 var NodeHelper = require("node_helper");
 
 module.exports = NodeHelper.create({
+	socketNotificationReceived: function(notification, payload)
+	{
+		const self = this;
 
-	start: function() {
-		console.log("Starting node helper: " + this.name);
+		if(notification === "GET_SOLAR")
+		{
+			let returnData = {};
+			let yesterday = new Date();
+			const yesterday_date = yesterday.setDate(yesterday.getDate() - 1).toISOString().substring(0, 10);
 
-	},
+			const solarEdgeOverviewUrl = payload.config.url + payload.config.siteId + "/overview?api_key=" + payload.config.apiKey;
+			const solarEdgeYesterdayUrl = payload.config.url + payload.config.siteId + "/energy?timeUnit=DAY&endDate=" + yesterday_date + "&startDate=" + yesterday_date + "&api_key=" + payload.config.apiKey;
 
-	socketNotificationReceived: function(notification, payload) {
-		var self = this;
-		console.log("Notification: " + notification + " Payload: " + payload);
-
-		if(notification === "GET_SOLAR") {
-			var solarEdgeUrl = payload.config.url + payload.config.siteId + "/overview?api_key=" + payload.config.apiKey;
-			request(solarEdgeUrl, function (error, response, body) {
-				if (!error && response.statusCode == 200) {
-					var jsonData = JSON.parse(body);
-				        self.sendSocketNotification("SOLAR_DATA", jsonData);
+			request(solarEdgeOverviewUrl, function (error, response, body)
+			{
+				if (!error && response.statusCode == 200)
+				{
+					Object.assign(returnData, JSON.parse(body));
 				}
 			});
+
+			request(solarEdgeYesterdayUrl, function (error, response, body)
+			{
+				if (!error && response.statusCode == 200)
+				{
+					Object.assign(returnData, JSON.parse(body));
+				}
+			});
+
+			console.log(returnData);
+
+			self.sendSocketNotification("SOLAR_DATA", JSON.parse(returnData));
 		}
 	},
 });
