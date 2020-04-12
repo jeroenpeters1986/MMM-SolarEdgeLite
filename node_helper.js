@@ -1,7 +1,7 @@
-var request = require('request');
-var NodeHelper = require("node_helper");
+const request = require('request');
+const node_helper = require("node_helper");
 
-module.exports = NodeHelper.create({
+module.exports = node_helper.create({
 	socketNotificationReceived: function(notification, payload)
 	{
 		const self = this;

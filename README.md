@@ -1,5 +1,5 @@
 # MMM-SolarEdgeLite
-A simple Solar Module for MagicMirror2 designed to integrate with a SolarEdge System
+A simple solar module for MagicMirror2 designed to integrate with a SolarEdge System
 
 ## Dependencies
   * A [MagicMirror<sup>2</sup>](https://github.com/MichMich/MagicMirror) installation
@@ -13,12 +13,12 @@ A simple Solar Module for MagicMirror2 designed to integrate with a SolarEdge Sy
 ```
  {
     module: 'MMM-SolarEdgeLite',
-	position: 'bottom_left',
+	position: 'middle_center',
 	config: {
 		apiKey: "################################", //Requires your own API Key
 		siteId: "12345", //SolarEdge site ID
-        languague: "en",
-	}1
+        languague: "en"
+	}
  },
 ```
 **Note:** Only enter your API Key in the `config.js` file. Your API Key is yours alone, _do not_ post or use it elsewhere.
