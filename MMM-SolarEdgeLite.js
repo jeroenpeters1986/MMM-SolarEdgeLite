@@ -22,14 +22,16 @@ Module.register("MMM-SolarEdgeLite",{
         let strings = [];
         if( lang === 'nl' ) {
             strings["title"] = "Zonnepanelen";
-            strings["titles"] = ["Huidig vermogen:", "Vandaag gegenereerd:", "Deze maand:", "Afgelopen jaar:", "Totale looptijd:"];
-            strings["suffixes"] = ["Watt", "kWh", "kWh", "kWh", "MWh"];
-            strings["results"] = ["Laden...", "Laden...", "Laden...", "Laden...", "Laden..."];
+            strings["loading"] = "Bezig met laden...";
+            strings["titles"] = ["Huidig vermogen:", "Vandaag:", "Gisteren:", "Deze maand:"];
+            strings["suffixes"] = ["Watt", "kWh", "kWh", "kWh"];
+            strings["results"] = ["Laden...", "Laden...", "Laden...", "Laden..."];
         } else {
             strings["title"] = "SolarEdge PV";
-            strings["titles"] = ["Current power:", "Generated today:", "This month:", "Last Year:", "Lifetime Energy:"];
-            strings["suffixes"] = ["Watt", "kWh", "kWh", "kWh", "MWh"];
-            strings["results"] = ["Laden...", "Laden...", "Laden...", "Laden...", "Laden..."];
+            strings["loading"] = "Loading...";
+            strings["titles"] = ["Current power:", "Today:", "Yesterday:", "This month:"];
+            strings["suffixes"] = ["Watt", "kWh", "kWh", "kWh"];
+            strings["results"] = ["Loading...", "Loading...", "Loading...", "Loading...",];
         }
         return strings[string_title];
     },
@@ -62,24 +64,23 @@ Module.register("MMM-SolarEdgeLite",{
 
     // Contact node helper for solar data
     getSolarData: function() {
-        this.sendSocketNotification("GET_SOLAR", {
+        this.sendSocketNotification("GET_SEL_DATA", {
             config: this.config
-          });
+        });
     },
 
     // Handle node helper response
     socketNotificationReceived: function(notification, payload) {
-    if (notification === "SOLAR_DATA") {
-	    let currentPower = payload.overview.currentPower.power;
-	    if (currentPower > 1000) {
+        if (notification === "SEL_DATA") {
+	        let currentPower = payload.overview.currentPower.power;
+	        if (currentPower > 1000) {
                this.results[0] = (currentPower / 1000).toFixed(2) + " kW";
             } else {
                this.results[0] = currentPower + " Watt";
             }
             this.results[1] = (payload.overview.lastDayData.energy / 1000).toFixed(2) + " kWh";
-            this.results[2] = (payload.overview.lastMonthData.energy / 1000).toFixed(2) + " kWh";
-            this.results[3] = (payload.overview.lastYearData.energy / 1000).toFixed(2) + " kWh";
-            this.results[4] = (payload.overview.lifeTimeData.energy / 1000000).toFixed(2) + " MWh";
+            this.results[2] = (payload.yesterday / 1000).toFixed(2) + " kWh";
+            this.results[3] = (payload.overview.lastMonthData.energy / 1000).toFixed(2) + " kWh";
             this.loaded = true;
             this.updateDom(1000);
         }
@@ -96,7 +97,7 @@ Module.register("MMM-SolarEdgeLite",{
 
         //Display loading while waiting for API response
         if (!this.loaded) {
-      	    wrapper.innerHTML = "Loading...";
+      	    wrapper.innerHTML = this.getLangStrings(this.config.language, 'loading');
             return wrapper;
       	}
 
@@ -121,7 +122,6 @@ Module.register("MMM-SolarEdgeLite",{
 
       	for (let i = 0; i < this.results.length; i++) {
         		let row = document.createElement("tr");
-
         		let titleTr = document.createElement("td");
         		let dataTr = document.createElement("td");
 
@@ -130,12 +130,11 @@ Module.register("MMM-SolarEdgeLite",{
                 dataTr.innerHTML = this.results[i];
         		titleTr.className += " small regular bright";
         		dataTr.classname += " small light normal";
-
         		row.appendChild(titleTr);
         		row.appendChild(dataTr);
-
         		tb.appendChild(row);
       	}
+
         wrapper.appendChild(tb);
         return wrapper;
     }

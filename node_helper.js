@@ -6,11 +6,11 @@ module.exports = node_helper.create({
 	{
 		const self = this;
 
-		if(notification === "GET_SOLAR")
+		if(notification === "GET_SEL_DATA")
 		{
 			let returnData = {};
-			let yesterday = new Date();
-			const yesterday_date = yesterday.setDate(yesterday.getDate() - 1).toISOString().substring(0, 10);
+			let yesterday = (function(d){ d.setDate(d.getDate()-1); return d})(new Date);
+			const yesterday_date = yesterday.toISOString().substring(0, 10);
 
 			const solarEdgeOverviewUrl = payload.config.url + payload.config.siteId + "/overview?api_key=" + payload.config.apiKey;
 			const solarEdgeYesterdayUrl = payload.config.url + payload.config.siteId + "/energy?timeUnit=DAY&endDate=" + yesterday_date + "&startDate=" + yesterday_date + "&api_key=" + payload.config.apiKey;
@@ -19,21 +19,20 @@ module.exports = node_helper.create({
 			{
 				if (!error && response.statusCode == 200)
 				{
-					Object.assign(returnData, JSON.parse(body));
+					returnData = JSON.parse(body);
 				}
-			});
 
-			request(solarEdgeYesterdayUrl, function (error, response, body)
-			{
-				if (!error && response.statusCode == 200)
+				request(solarEdgeYesterdayUrl, function (error, response, body)
 				{
-					Object.assign(returnData, JSON.parse(body));
-				}
+					if (!error && response.statusCode == 200)
+					{
+						let yesterData = JSON.parse(body);
+						returnData.yesterday = yesterData.energy.values[0].value;
+					}
+
+					self.sendSocketNotification("SEL_DATA", returnData);
+				});
 			});
-
-			console.log(returnData);
-
-			self.sendSocketNotification("SOLAR_DATA", JSON.parse(returnData));
 		}
 	},
 });
