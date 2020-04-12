@@ -112,7 +112,7 @@ Module.register("MMM-SolarEdgeLite",{
             sTitle.innerHTML = this.getLangStrings(this.config.language, 'title');
             sTitle.className += " thin normal";
             imgDiv.appendChild(img);
-    	      imgDiv.appendChild(sTitle);
+            imgDiv.appendChild(sTitle);
 
             let divider = document.createElement("hr");
             divider.className += " dimmed";
@@ -129,9 +129,11 @@ Module.register("MMM-SolarEdgeLite",{
         		dataTr.innerHTML = this.results[i] + " " + this.suffixes[i];
                 dataTr.innerHTML = this.results[i];
         		titleTr.className += " small regular bright";
-        		dataTr.classname += " small light normal";
+        		dataTr.className += " small light normal";
+
         		row.appendChild(titleTr);
         		row.appendChild(dataTr);
+
         		tb.appendChild(row);
       	}
 
