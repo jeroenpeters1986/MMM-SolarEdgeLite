@@ -5,26 +5,36 @@ A simple solar module for MagicMirror2 designed to integrate with a SolarEdge Sy
   * A [MagicMirror<sup>2</sup>](https://github.com/MichMich/MagicMirror) installation
 
 ## Installation
-  1. Clone repo into MagicMirror/modules directory
-  2. Get a SolarEdge API key and authorize your application (instructions below).
-  3. Create an entry in 'config/config.js' with your API Key, SiteID and any config options.
 
- **Example:**
+In your terminal, go to your MagicMirror's Module folder:
+````
+cd ~/MagicMirror/modules
+````
+
+Clone this repository:
+````
+git clone https://github.com/jeroenpeters1986/MMM-SolarEdgeLite.git
+````
+
+Now get your SolarEdge API key and authorize your application (instructions below).
+
+Add the module to the modules array in the `config/config.js` file:
+
 ```
  {
     module: 'MMM-SolarEdgeLite',
 	position: 'middle_center',
 	config: {
-		apiKey: "################################", //Requires your own API Key
-		siteId: "12345", //SolarEdge site ID
-        languague: "en"
+		apiKey: "################################", // Requires your own API Key
+		siteId: "12345", // SolarEdge site ID
+		languague: "en"
 	}
  },
 ```
 **Note:** Only enter your API Key in the `config.js` file. Your API Key is yours alone, _do not_ post or use it elsewhere.
 
 ## Sample
-![alt text](https://github.com/bertieuk/MMM-SolarEdge/blob/master/SolarEdge.png "Example")
+![MMM-SolarEdgeLite module for MagicMirror](https://raw.githubusercontent.com/jeroenpeters1986/MMM-SolarEdgeLite/master/SolarEdgeLite.png "MMM-SolarEdgeLite module for MagicMirror")
 
 ## Optional Config
 | **Option** | **Description** |
