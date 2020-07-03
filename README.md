@@ -1,8 +1,7 @@
 # MMM-SolarEdgeLite
 A simple solar module for MagicMirror2 designed to integrate with a SolarEdge System
 
-## Dependencies
-  * A [MagicMirror<sup>2</sup>](https://github.com/MichMich/MagicMirror) installation
+
 
 ## Installation
 
@@ -46,3 +45,8 @@ Add the module to the modules array in the `config/config.js` file:
 Use of this module requires
   1. An API Key, which you can obtain by emailing SolarEdge support (e.g support-uk@solaredge.com )
   2. The Site ID of the SolarEdge system you wish to monitor, which can be found in the Dashboard https://monitoring.solaredge.com
+
+## Support
+If you like this module and want to thank, please buy me a coffee.
+
+<a href="https://www.buymeacoffee.com/jeroenpeters" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 180px !important;" ></a>
